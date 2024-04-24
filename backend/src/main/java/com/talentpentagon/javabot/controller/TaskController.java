@@ -20,72 +20,71 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.PutMapping;
 
-
-
 @RestController
 public class TaskController {
 
-        // Hardcoded status: return ResponseEntity.status(HttpStatus.NOT_FOUND).body(Collections.emptyList());
-        // Just an empty list: return ResponseEntity.ok(Collections.emptyList());
+    // Hardcoded status: return
+    // ResponseEntity.status(HttpStatus.NOT_FOUND).body(Collections.emptyList());
+    // Just an empty list: return ResponseEntity.ok(Collections.emptyList());
 
     @Autowired
     private TaskService taskService;
 
     @GetMapping("task")
-    public ResponseEntity<List<TaskItem>> getTasks(){
+    public ResponseEntity<List<TaskItem>> getTasks() {
         List<TaskItem> tasks = taskService.getTasks();
         return ResponseEntity.ok(tasks);
-
     }
 
     @GetMapping("task/{id}")
     public ResponseEntity<TaskItem> getTaskById(@PathVariable("id") int id) {
-        try{
+        try {
             ResponseEntity<TaskItem> task = taskService.getTaskById(id);
             return new ResponseEntity<TaskItem>(task.getBody(), task.getStatusCode());
-        } 
-        catch (Exception e){
+        } catch (Exception e) {
             System.out.println("ERROR: " + e.getMessage());
             return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(null);
-        }        
+        }
     }
 
     @PostMapping("task")
     public ResponseEntity<TaskItem> postTask(@RequestBody TaskItem task) {
-        try{
+        try {
             ResponseEntity<TaskItem> newTask = taskService.addTask(task);
             return new ResponseEntity<TaskItem>(newTask.getBody(), newTask.getStatusCode());
-        } 
-        catch (Exception e){
+        } catch (Exception e) {
             System.out.println("ERROR: " + e.getMessage());
-            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(null);
-        }        
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(null); // postTaskCommandHandler
+        }
     }
 
     // Whole edit
     @PutMapping("task/{id}")
-    public ResponseEntity<TaskItem> putTask(@PathVariable int id,@RequestBody TaskItem task) {
-        try{
+    public ResponseEntity<TaskItem> putTask(@PathVariable int id, @RequestBody TaskItem task) {
+        try {
             ResponseEntity<TaskItem> updatedTask = taskService.updateTask(id, task);
             return new ResponseEntity<TaskItem>(updatedTask.getBody(), updatedTask.getStatusCode());
-        } 
-        catch (Exception e){
+        } catch (Exception e) {
             System.out.println("ERROR: " + e.getMessage());
             return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(null);
-        }        
+        }
     }
 
     // Use this only to change the status
     @PutMapping("task/{id}/status")
     public ResponseEntity<TaskItem> putTaskStatus(@PathVariable int id, @RequestBody TaskItem task) {
-        try{
+        try {
             ResponseEntity<TaskItem> updatedTask = taskService.updateTaskStatus(id, task.getStatus());
             return new ResponseEntity<TaskItem>(updatedTask.getBody(), updatedTask.getStatusCode());
-        } 
-        catch (Exception e){
+        } catch (Exception e) {
             System.out.println("ERROR: " + e.getMessage());
             return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(null);
-        }        
+        }
+    }
+
+    public ResponseEntity execute(TaskItem taskItem) {
+        // TODO Auto-generated method stub
+        throw new UnsupportedOperationException("Unimplemented method 'execute'");
     }
 
 }
