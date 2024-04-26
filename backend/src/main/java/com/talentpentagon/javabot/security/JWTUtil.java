@@ -35,8 +35,9 @@ public class JWTUtil {
 
     // Extract username
     public static String extractUsername(String token){
-        return Jwts.parser()
+        return Jwts.parserBuilder()
                     .setSigningKey(SECRET)
+                    .build()
                     .parseClaimsJws(token)
                     .getBody()
                     .getSubject();
@@ -44,8 +45,9 @@ public class JWTUtil {
 
     // Extract role
     public static String extractRole(String token){
-        return Jwts.parser()
+        return Jwts.parserBuilder()
                     .setSigningKey(SECRET)
+                    .build()
                     .parseClaimsJws(token)
                     .getBody()
                     .get("role", String.class);
@@ -53,8 +55,9 @@ public class JWTUtil {
 
     // Extract ID
     public static int extractId(String token){
-        return Jwts.parser()
+        return Jwts.parserBuilder()
                     .setSigningKey(SECRET)
+                    .build()
                     .parseClaimsJws(token)
                     .getBody()
                     .get("id", Integer.class);
@@ -62,8 +65,9 @@ public class JWTUtil {
 
     public static boolean validateToken(String token){
         try{
-            Jwts.parser()
+            Jwts.parserBuilder()
             .setSigningKey(SECRET)
+            .build()
             .parseClaimsJws(token);
             return true;
         }
