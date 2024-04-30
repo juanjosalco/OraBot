@@ -15,7 +15,6 @@ import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 
-
 import java.util.Optional;
 
 import org.springframework.beans.factory.annotation.Autowired;
@@ -35,35 +34,37 @@ public class SecurityController {
 
     @Autowired
     private BCryptPasswordEncoder passwordEncoder;
-    
+
     @PostMapping("/login")
     public ResponseEntity login(@RequestBody LoginRequest request) {
         Optional<Auth> authConfirmation = authRepository.findByEmail(request.getEmail());
         System.out.println("Auth: " + authConfirmation);
 
-        if(authConfirmation.isPresent()){
-            if(!authConfirmation.get().isEnabled()) return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body("Account locked");
+        if (authConfirmation.isPresent()) {
+            if (!authConfirmation.get().isEnabled())
+                return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body("Account locked");
             System.out.println("Auth: " + authConfirmation.get());
             try {
-                UsernamePasswordAuthenticationToken token = new UsernamePasswordAuthenticationToken(request.getEmail(), request.getPassword());
+                UsernamePasswordAuthenticationToken token = new UsernamePasswordAuthenticationToken(request.getEmail(),
+                        request.getPassword());
                 Authentication authentication = authenticationManager.authenticate(token);
                 SecurityContextHolder.getContext().setAuthentication(authentication);
-        
+
                 int uid = authRepository.findByEmail(request.getEmail()).get().getUid();
-    
+
                 // Get user data
                 CustomUser user = customUserRepository.findById(uid).get();
                 String role = user.getRole();
                 String email = authConfirmation.get().getEmail();
                 int teamId = user.getTeamId();
-        
+
                 // Generate JWT token
                 String jwtToken = JWTUtil.generateToken(email, role, uid, teamId);
-        
+
                 return ResponseEntity.ok(new JwtResponse(jwtToken));
 
             } catch (Exception e) {
-    
+
                 System.out.println("Exception: " + e.getMessage());
                 Auth authentication = authConfirmation.get();
                 if (authentication.getAttempts() >= 3) {
@@ -80,14 +81,14 @@ public class SecurityController {
         }
 
         return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body("User not found");
-        
+
     }
 
     @PostMapping("/signUp")
     public ResponseEntity createUser(@RequestBody SignupRequest request) {
         Optional<Auth> credentials = authRepository.findByEmail(request.getEmail());
 
-        if(credentials.isPresent()){
+        if (credentials.isPresent()) {
             return ResponseEntity.status(HttpStatus.CONFLICT).body("User already exists");
         }
 
@@ -98,19 +99,27 @@ public class SecurityController {
         newUser.setRole(request.getRole());
         newUser.setTeamId(request.getTeamId());
 
-
         Auth newAuth = new Auth();
         newAuth.setEmail(request.getEmail());
-        newAuth.setPassword(passwordEncoder.encode(request.getPassword()));
+        String password = request.getPassword();
+        if (password != null) {
+            newAuth.setPassword(passwordEncoder.encode(password));
+        } else {
+            // Handle the case where the password is null
+            // For example, you might want to set a default password or return an error
+            // response
+            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("Password cannot be null");
+        }
         newAuth.setUser(newUser);
+        newAuth.setUid(newUser.getId());
         newAuth.setAttempts(0);
         newAuth.setEnabled(true);
 
         customUserRepository.save(newUser);
         newAuth.setUser(newUser);
         authRepository.save(newAuth);
-        
+
         return ResponseEntity.ok("User created successfully");
     }
-        
+
 }

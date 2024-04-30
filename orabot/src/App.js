@@ -7,7 +7,9 @@ import { DashboardScreen } from './features/Dashboard/Views/DashboardScreen';
 import { RouterProvider, Route, createBrowserRouter } from 'react-router-dom';
 import { TaskInformationScreen } from './features/TasksManagment/Views/TaskInformationScreen';
 
+
 import axios from 'axios';
+import AxiosService from './features/GlobalComponents/AxiosService';
 
 const tele = window.Telegram.WebApp;
 
@@ -44,6 +46,10 @@ function App() {
     {
         path: '/task/:id',
         element: <TaskInformationScreen />
+    },
+    {
+        path: '/axios',
+        element: <AxiosService />
     }
   ])
 
