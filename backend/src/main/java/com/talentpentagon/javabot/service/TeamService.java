@@ -15,45 +15,43 @@ import org.springframework.stereotype.Service;
 
 @Service
 public class TeamService {
-    
+
     @Autowired
     private TeamRepository teamRepository;
-    
+
     // Get team by id
-    public ResponseEntity<Team> getTeamById(int id){
+    public ResponseEntity<Team> getTeamById(int id) {
         Optional<Team> team = teamRepository.findById(id);
 
-        if(team.isPresent()){
+        if (team.isPresent()) {
             return new ResponseEntity<Team>(team.get(), HttpStatus.OK);
-        } 
-        else{
+        } else {
             return new ResponseEntity<Team>(HttpStatus.NOT_FOUND);
-        } 
+        }
     }
 
     // Get team tasks by team id
-    public List<TaskItem> getTeamTasks(int id, String sortBy, String status){
+    public List<TaskItem> getTeamTasks(int id, String sortBy, String status, Integer priority) {
         Optional<Team> team = teamRepository.findById(id);
 
-        try{
+        try {
             List<TaskItem> tasks = new ArrayList<>();
 
-            if(!team.isPresent()) return null;
+            if (!team.isPresent())
+                return null;
 
             team.get().getMembers().forEach(member -> {
                 List<TaskItem> assignedTasks = member.getAssignedTasks();
-                if(!assignedTasks.isEmpty()){
+                if (!assignedTasks.isEmpty()) {
                     assignedTasks.removeIf(task -> task.getStatus().equals("Cancelled"));
                     tasks.addAll(assignedTasks);
-                } 
+                }
             });
 
             return tasks;
-        }
-        catch(Exception e){
+        } catch (Exception e) {
             return null;
         }
     }
 
-    
 }

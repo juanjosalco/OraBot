@@ -35,8 +35,10 @@ public class TaskService {
         }
     }
 
+    // MARY
     // Extracts user from the JWT token and returns the tasks assigned to that user
-    public ResponseEntity<List<TaskItem>> getTasksForUser(Integer assignee, String sortBy, String status) {
+    public ResponseEntity<List<TaskItem>> getTasksForUser(Integer assignee, String sortBy, String status,
+            Integer priority) {
         Sort.Direction direction = Sort.Direction.ASC;
         if (sortBy.startsWith("-")) {
             direction = Sort.Direction.DESC;
@@ -44,20 +46,58 @@ public class TaskService {
         }
 
         Sort sort = Sort.by(direction, sortBy);
-        List<TaskItem> tasks = taskRepository.findByAssignee(assignee, sort);
 
-        if (tasks.isEmpty()) return ResponseEntity.status(HttpStatus.NOT_FOUND).body(tasks);
+        List<TaskItem> tasks;
+
+        // Filter by status, priority, or both
+        if (!status.equals("ALL") && !priority.equals(0)) {
+            tasks = taskRepository.findByAssigneeAndStatusAndPriority(assignee, status, priority, sort);
+        } else if (!status.equals("ALL")) {
+            tasks = taskRepository.findByAssigneeAndStatus(assignee, status, sort);
+        } else if (!priority.equals(0)) {
+            tasks = taskRepository.findByAssigneeAndPriority(assignee, sort);
+        } else {
+            tasks = taskRepository.findByAssignee(assignee, sort);
+        }
+
+        if (tasks.isEmpty())
+            return ResponseEntity.notFound().build();
+
+        // Remove cancelled tasks
         tasks.removeIf(task -> task.getStatus().equals("Cancelled"));
 
-        if (status.equals("ALL")) 
-        {
-            return new ResponseEntity<List<TaskItem>>(tasks, HttpStatus.OK);
-        } 
-        else 
-        {
-            return new ResponseEntity<List<TaskItem>>(tasks, HttpStatus.OK);
-        }
+        return ResponseEntity.ok(tasks);
     }
+
+    // Extracts user from the JWT token and returns the tasks assigned to that user
+    // public ResponseEntity<List<TaskItem>> getTasksForUser(Integer assignee,
+    // String sortBy, String status,
+    // Integer priority) {
+    // Sort.Direction direction = Sort.Direction.ASC;
+    // if (sortBy.startsWith("-")) {
+    // direction = Sort.Direction.DESC;
+    // sortBy = sortBy.substring(1);
+    // }
+
+    // Sort sort = Sort.by(direction, sortBy);
+    // List<TaskItem> tasks = taskRepository.findByAssignee(assignee, sort);
+
+    // if (tasks.isEmpty())
+    // return ResponseEntity.status(HttpStatus.NOT_FOUND).body(tasks);
+    // tasks.removeIf(task -> task.getStatus().equals("Cancelled"));
+
+    // // Filters and sorts
+    // // Filter by Priority
+    // if (!priority.equals("ALL")) {
+    // tasks.removeIf(task -> !task.getPriority().equals(priority));
+    // }
+
+    // if (status.equals("ALL")) {
+    // return new ResponseEntity<List<TaskItem>>(tasks, HttpStatus.OK);
+    // } else {
+    // return new ResponseEntity<List<TaskItem>>(tasks, HttpStatus.OK);
+    // }
+    // }
 
     // Add a new task
     public ResponseEntity<TaskItem> addTask(TaskItem task) {
@@ -97,25 +137,26 @@ public class TaskService {
     }
 
     // Sort and filter data
-    public ResponseEntity<List<TaskItem>> sortAndFilter(List<TaskItem> tasks, String sortBy, String status) {
+    // public ResponseEntity<List<TaskItem>> sortAndFilter(List<TaskItem> tasks,
+    // String sortBy, String status) {
 
-        // Sort
-        if (sortBy.equals("dueDate")) {
-            tasks.sort((t1, t2) -> t1.getDueDate().compareTo(t2.getDueDate()));
-        } else if (sortBy.equals("priority")) {
-            tasks.sort((t1, t2) -> t1.getPriority().compareTo(t2.getPriority()));
-        } else if (sortBy.equals("creationDate")) {
-            tasks.sort((t1, t2) -> t1.getCreationDate().compareTo(t2.getCreationDate()));
-        } else {
-            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(null);
-        }
+    // // Sort
+    // if (sortBy.equals("dueDate")) {
+    // tasks.sort((t1, t2) -> t1.getDueDate().compareTo(t2.getDueDate()));
+    // } else if (sortBy.equals("priority")) {
+    // tasks.sort((t1, t2) -> t1.getPriority().compareTo(t2.getPriority()));
+    // } else if (sortBy.equals("creationDate")) {
+    // tasks.sort((t1, t2) -> t1.getCreationDate().compareTo(t2.getCreationDate()));
+    // } else {
+    // return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(null);
+    // }
 
-        // Filter
-        if (!status.equals("ALL")) {
-            tasks.removeIf(task -> !task.getStatus().equals(status));
-        }
+    // // Filter
+    // if (!status.equals("ALL")) {
+    // tasks.removeIf(task -> !task.getStatus().equals(status));
+    // }
 
-        return ResponseEntity.ok(tasks);
-    }
+    // return ResponseEntity.ok(tasks);
+    // }
 
 }

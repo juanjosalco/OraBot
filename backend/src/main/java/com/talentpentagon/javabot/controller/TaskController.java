@@ -2,22 +2,18 @@ package com.talentpentagon.javabot.controller;
 
 import java.util.List;
 
-// import com.talentpentagon.javabot.commandhandlers.EditTaskCommandHandler;
-// import com.talentpentagon.javabot.commandhandlers.EditTaskStatusCommandHandler;
-// import com.talentpentagon.javabot.commandhandlers.GetTaskByIdCommandHandler;
-// import com.talentpentagon.javabot.commandhandlers.GetTaskByUserCommandHandler;
-// import com.talentpentagon.javabot.commandhandlers.NewTaskCommandHandler;
-// import com.talentpentagon.javabot.commandhandlers.GetTaskByTeamHandler;
 import com.talentpentagon.javabot.commandhandlers.*;
 import com.talentpentagon.javabot.model.TaskItem;
 import com.talentpentagon.javabot.queryhandlers.GetTaskByIdCommandHandler;
 import com.talentpentagon.javabot.queryhandlers.GetTaskByTeamHandler;
 import com.talentpentagon.javabot.queryhandlers.GetTaskByUserCommandHandler;
+import com.talentpentagon.javabot.repository.TaskRepository;
 import com.talentpentagon.javabot.service.TaskService;
 import com.talentpentagon.javabot.security.JWTUtil;
 // import com.talentpentagon.javabot.service.TeamService;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Sort;
 // import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
@@ -37,8 +33,8 @@ public class TaskController {
     @Autowired
     private TaskService taskService;
 
-    // @Autowired
-    // private TeamService teamService;
+    @Autowired
+    private TaskRepository taskRepository;
 
     @Autowired
     private NewTaskCommandHandler newTaskCommandHandler;
@@ -74,33 +70,51 @@ public class TaskController {
         return getTaskByIdCommandHandler.execute(id);
     }
 
+    // ------------------------------------------------------------------------------------
+
+    // MARY
     // Get all tasks for a team
     @CrossOrigin(origins = "*", allowedHeaders = "*")
     @PreAuthorize("hasRole('Manager')")
     @GetMapping("task/team")
-    public ResponseEntity<List<TaskItem>> getTasksForTeam(@RequestHeader(name = "Authorization") String token,
+    public ResponseEntity<List<TaskItem>> getTasksForTeam(
+            @RequestHeader(name = "Authorization") String token,
             @RequestParam(name = "sortBy", defaultValue = "creationDate") String sortBy,
-            @RequestParam(name = "status", defaultValue = "ALL") String status) {
+            @RequestParam(name = "status", defaultValue = "ALL") String status,
+            @RequestParam(name = "priority", defaultValue = "0") Integer priority) {
 
         int teamId = JWTUtil.extractTeamId(token);
 
-        return getTaskByTeamHandler.execute(teamId, sortBy, status); // ask Diego
+        return getTaskByTeamHandler.execute(teamId, sortBy, status, priority);
     }
 
+    // MARY
     // Get User's tasks
     @CrossOrigin(origins = "*", allowedHeaders = "*")
     @PreAuthorize("hasRole('Developer')")
     @GetMapping("task/user")
-    public ResponseEntity<List<TaskItem>> getTasksForUser(@RequestHeader(name = "Authorization") String token,
+    public ResponseEntity<List<TaskItem>> getTasksForUser(
+            @RequestHeader(name = "Authorization") String token,
             @RequestParam(name = "sortBy", defaultValue = "creationDate") String sortBy,
-            @RequestParam(name = "status", defaultValue = "ALL") String status) {
+            @RequestParam(name = "status", defaultValue = "ALL") String status,
+            @RequestParam(name = "priority", defaultValue = "0") Integer priority) {
 
         int assignee = JWTUtil.extractId(token);
 
         // return taskService.getTasksForUser(assignee, sortBy, status);
-        return getTaskByUserCommandHandler.execute(assignee, sortBy, status);
+        return getTaskByUserCommandHandler.execute(assignee, sortBy, status, priority);
     }
 
+    //
+    // @GetMapping("task/priority/{priority}")
+    // public ResponseEntity<List<TaskItem>>
+    // getTasksByPriority(@PathVariable("priority") Integer priority) {
+    // List<TaskItem> tasks = taskRepository.findByPriority(priority,
+    // Sort.by("priority"));
+    // return ResponseEntity.ok(tasks);
+    // }
+
+    // ------------------------------------------------------------------------------------
     // Add task
     @CrossOrigin(origins = "*", allowedHeaders = "*")
     @PreAuthorize("hasRole('Developer')")
@@ -117,7 +131,7 @@ public class TaskController {
     @PutMapping("task/{id}")
     public ResponseEntity<TaskItem> putTask(@PathVariable int id, @RequestBody TaskItem task) {
         TaskItem t = getTaskByIdCommandHandler.execute(id).getBody();
-        if(t!=null){
+        if (t != null) {
             t.setDescription(task.getDescription());
             t.setTaskTitle(task.getTitle());
             t.setDueDate(task.getDueDate());
@@ -134,7 +148,7 @@ public class TaskController {
     @PutMapping("task/{id}/status")
     public ResponseEntity<TaskItem> putTaskStatus(@PathVariable int id, @RequestBody TaskItem task) {
         TaskItem t = getTaskByIdCommandHandler.execute(id).getBody();
-        if(t != null){
+        if (t != null) {
             t.setStatus(task.getStatus());
             t.setStatusChangeDate(task.getStatusChangeDate());
         }
