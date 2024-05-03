@@ -18,6 +18,11 @@ public class TeamService {
     
     @Autowired
     private TeamRepository teamRepository;
+
+    // Add team
+    public void addTeam(Team team){
+        teamRepository.save(team);
+    }
     
     // Get team by id
     public ResponseEntity<Team> getTeamById(int id){

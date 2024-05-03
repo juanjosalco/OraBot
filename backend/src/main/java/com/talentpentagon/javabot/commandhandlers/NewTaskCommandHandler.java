@@ -6,14 +6,14 @@ import org.springframework.stereotype.Service;
 
 import org.springframework.http.HttpStatus;
 
-import com.talentpentagon.javabot.Commands.GetByIdCommand;
+import com.talentpentagon.javabot.Commands.PostPutCommand;
 import com.talentpentagon.javabot.model.TaskItem;
 import com.talentpentagon.javabot.service.TaskService;
 
 import io.micrometer.common.util.StringUtils;
 
 @Service
-public class NewTaskCommandHandler implements GetByIdCommand<TaskItem, ResponseEntity<TaskItem>> {
+public class NewTaskCommandHandler implements PostPutCommand<TaskItem, ResponseEntity<TaskItem>> {
 
     @Autowired
     private TaskService taskService;
