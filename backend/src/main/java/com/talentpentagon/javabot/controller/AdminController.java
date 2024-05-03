@@ -20,14 +20,12 @@ public class AdminController {
 
     @Autowired
     NewTeamCommandHandler newTeamCommandHandler;
-
     
     @CrossOrigin(origins = "*", allowedHeaders = "*")
-    @PreAuthorize("hasRole('Developer')")
+    @PreAuthorize("hasRole('Notch')")
     @PostMapping("team")
     public ResponseEntity<Team> postTeam(@RequestBody Team teamBody) {
         return newTeamCommandHandler.execute(teamBody);
     }
-
 
 }

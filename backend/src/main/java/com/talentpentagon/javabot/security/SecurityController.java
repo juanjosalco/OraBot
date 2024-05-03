@@ -23,6 +23,7 @@ import org.springframework.web.bind.annotation.RequestBody;
 import java.util.Optional;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.security.authentication.AuthenticationManager;
 
 @RestController
@@ -86,6 +87,8 @@ public class SecurityController {
     }
 
     @Transactional
+    @CrossOrigin(origins = "*", allowedHeaders = "*")
+    @PreAuthorize("hasRole('Notch')")
     @PostMapping("/signUp")
     public ResponseEntity<String> createUser(@RequestBody SignupRequest request) {
         Optional<Auth> credentials = authRepository.findByEmail(request.getEmail());
@@ -105,7 +108,7 @@ public class SecurityController {
         newUser.setRole(request.getRole());
         newUser.setTeamId(request.getTeamId());
 
-
+        
         Auth newAuth = new Auth();
         newAuth.setEmail(request.getEmail());
         newAuth.setPassword(passwordEncoder.encode(request.getPassword()));
