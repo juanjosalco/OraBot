@@ -108,7 +108,7 @@ public class SecurityController {
         newUser.setRole(request.getRole());
         newUser.setTeamId(request.getTeamId());
 
-        
+
         Auth newAuth = new Auth();
         newAuth.setEmail(request.getEmail());
         newAuth.setPassword(passwordEncoder.encode(request.getPassword()));

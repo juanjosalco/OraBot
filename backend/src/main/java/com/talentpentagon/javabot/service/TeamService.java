@@ -60,5 +60,20 @@ public class TeamService {
         }
     }
 
+    // Update team
+    public ResponseEntity<Team> updateTeam(Team team){
+        Optional<Team> teamData = teamRepository.findById(team.getId());
+
+        if(teamData.isPresent()){
+            Team _team = teamData.get();
+            _team.setName(team.getName());
+            _team.setMembers(team.getMembers());
+            return new ResponseEntity<Team>(teamRepository.save(_team), HttpStatus.OK);
+        } 
+        else{
+            return new ResponseEntity<Team>(HttpStatus.NOT_FOUND);
+        }
+    }
+
     
 }

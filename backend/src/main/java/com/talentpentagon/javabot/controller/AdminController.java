@@ -4,12 +4,15 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.CrossOrigin;
+import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RestController;
 
 import com.talentpentagon.javabot.commandhandlers.NewTeamCommandHandler;
 import com.talentpentagon.javabot.model.Team;
+import com.talentpentagon.javabot.service.CustomUserDetailsService;
 import com.talentpentagon.javabot.service.TeamService;
 
 @RestController
@@ -17,6 +20,9 @@ public class AdminController {
     
     @Autowired
     TeamService teamService;
+
+    @Autowired 
+    CustomUserDetailsService customUserDetailsService;
 
     @Autowired
     NewTeamCommandHandler newTeamCommandHandler;
@@ -26,6 +32,21 @@ public class AdminController {
     @PostMapping("team")
     public ResponseEntity<Team> postTeam(@RequestBody Team teamBody) {
         return newTeamCommandHandler.execute(teamBody);
+    }
+
+    // TODO: Better logic, it needs to also update the role of the user
+    @CrossOrigin(origins = "*", allowedHeaders = "*")
+    @PreAuthorize("hasRole('Notch')")
+    @PostMapping("team/update")
+    public ResponseEntity<Team> updateTeam(@RequestBody Team teamBody) {
+        return teamService.updateTeam(teamBody);
+    }
+
+    @CrossOrigin(origins = "*", allowedHeaders = "*")
+    @PreAuthorize("hasRole('Notch')")
+    @PutMapping("staff/free/{staffId}")
+    public ResponseEntity<String> freeStaff(@PathVariable int staffId) {
+        return customUserDetailsService.freeStaff(staffId);
     }
 
 }

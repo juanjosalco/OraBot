@@ -29,14 +29,14 @@ public class NewTeamCommandHandler implements PostPutCommand<Team, ResponseEntit
         if(StringUtils.isBlank(team.getName())){
             throw new RuntimeException("Team title cannot be empty");
         }
-        if(team.getName().matches(specialChars)){
+        if(!team.getName().matches(specialChars)){
             throw new RuntimeException("Team title cannot contain special characters");
         }
 
         if(StringUtils.isBlank(team.getDescription())){
             throw new RuntimeException("Team description cannot be empty");
         }
-        if(team.getDescription().matches(specialChars)){
+        if(!team.getDescription().matches(specialChars)){
             throw new RuntimeException("Team description cannot contain special characters");
         } 
 
