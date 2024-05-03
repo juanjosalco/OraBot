@@ -54,6 +54,7 @@ public class SecurityController {
                 SecurityContextHolder.getContext().setAuthentication(authentication);
         
                 int uid = authRepository.findByEmail(request.getEmail()).get().getUid();
+                authRepository.findByEmail(request.getEmail()).get().setAttempts(0);
     
                 // Get user data
                 CustomUser user = customUserRepository.findById(uid).get();
