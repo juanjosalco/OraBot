@@ -23,6 +23,15 @@ backend/*.gz
 
 */*.properties
 
+### Cloud
+/wallet
+/log
+/state
+/tls
+/backend/orabot-compose*
+/terraform/.terraform
+/terraform/.terraform.lock.hcl
+/terraform/terraform.tfstate*
 
 ### IntelliJ IDEA ###
 .idea

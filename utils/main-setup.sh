@@ -29,7 +29,7 @@ while ! state_done RUN_TYPE; do
     state_set_done PROVISIONING
     state_set_done K8S_PROVISIONING
     state_set RUN_NAME "talent-pentagon$(state_get RESERVATION_ID)"
-    state_set OB_DB_NAME "OBDB$(state_get RESERVATION_ID)"
+    state_set OB_DB_NAME "OracleBot_DB$(state_get RESERVATION_ID)"
     #state_set_done OKE_LIMIT_CHECK
     #state_set_done ATP_LIMIT_CHECK
   else
@@ -251,7 +251,7 @@ fi
 
 # Get MTDR_DB OCID
 while ! state_done OB_DB_OCID; do
-  OB_DB_OCID=`oci db autonomous-database list --compartment-id "$(cat state/COMPARTMENT_OCID)" --query 'join('"' '"',data[?"display-name"=='"'OBDB'"'].id)' --raw-output`
+  OB_DB_OCID=`oci db autonomous-database list --compartment-id "$(cat state/COMPARTMENT_OCID)" --query 'join('"' '"',data[?"display-name"=='"'OracleBot_DB'"'].id)' --raw-output`
   if [[ "$OB_DB_OCID" =~ ocid1.autonomousdatabase* ]]; then
     state_set OB_DB_OCID "$OB_DB_OCID"
   else
