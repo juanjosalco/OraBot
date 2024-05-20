@@ -114,7 +114,7 @@ spec:
     spec:
       containers:
         - name: orabot-front
-          image: %DOCKER_REGISTRY%/orabot-front:0.1
+          image: %DOCKER_REGISTRY%/frontend/orabot-front:0.1
           imagePullPolicy: Always
           ports:
             - containerPort: 3000
