@@ -35,7 +35,9 @@ public class CommentController {
     @PreAuthorize("hasRole('Developer') || hasRole('Manager')")
     @PostMapping("/comments")
     public ResponseEntity<Comment> createComment(@RequestBody Comment comment) {
-        return commentService.createComment(comment);
-        // return newCommentCommandHandler.execute(comment);
+        // return commentService.createComment(comment);
+        // console.log(comment);
+        System.out.println("Hi there!");
+        return newCommentCommandHandler.execute(comment);
     }
 }

@@ -39,9 +39,6 @@ public class TaskController {
     @Autowired
     private TaskService taskService;
 
-    // @Autowired
-    // private TeamService teamService;
-
     @Autowired
     private NewTaskCommandHandler newTaskCommandHandler;
 
