@@ -97,6 +97,7 @@ Follow International Standards for Software development like the Standard 26512.
 GitHub Projects to track the workflow throughout the project.
 
 **Other:**
+Testing connection :) | Moy silenciate
 
 **Approval:**
 - **Project Leader:** Juan José Salazar Cortés
