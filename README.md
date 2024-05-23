@@ -1,5 +1,4 @@
 <a name="readme-top"></a>
-<h1 align="center">Juan es puto</h1>
 <h1 align="center">Software Planning Evidence</h1>
 ChatBot to improve productivity and tasks’ visibility of each team member by the end of the semester using Oracle Cloud Infrastructure Tools to enhance the users service based on DevOps methodology.
 
@@ -16,7 +15,7 @@ ChatBot to improve productivity and tasks’ visibility of each team member by t
     <th> A00227255 </th>
   </tr>
     <tr>
-    <th> Juan José Salazar Cortés </th>
+    <th> Juan José Salazar Cortés Zorra</th>
     <th> A01642126 </th>
   </tr>
   <tr>
